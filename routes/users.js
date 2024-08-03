@@ -15,18 +15,28 @@ router.post('/', async function(req, res) {
 });
 
 router.post('/:_id/exercises', async function(req, res) {
-    console.log(req.body);
-    console.log(req.body[':_id']);
-    const foundUser = await findUserById(req.body[':_id']);
-    console.log('foundUser: ' + foundUser);
     const newExercise = new Exercise({
-        username: foundUser,
+        user: req.body[':_id'],
         description: req.body.description,
         duration: req.body.duration,
-        date: req.body.date
+        date: (new Date(req.body.date)).toDateString()
     });
-    createExercise(newExercise);
-    res.send(newExercise);
+
+    if (!req.body.date) {
+        var now = new Date();
+        newExercise.date = now.toDateString();
+    }
+
+    createExercise(newExercise.user,newExercise);
+
+    const foundUser = await findUserById(req.body[':_id']);
+    const response = {
+        username: foundUser,
+        description: newExercise.description,
+        duration: newExercise.duration,
+        date: newExercise.date
+    }
+    res.send(response);
 });
 
 router.get('/', async function(req, res) {

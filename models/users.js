@@ -1,13 +1,21 @@
 // Importing mongoose
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 // Defining a schema for a user
-const userSchema = new mongoose.Schema({
+const userSchema = new Schema({
     username: {
       type: String,
       required: true,
       unique: true
-    }
+    },
+    count: {
+      type: Number
+    },
+    log: [{
+      type: Schema.Types.ObjectId,
+      ref: 'Exercise'
+    }]
   });
 
 // Creating a model from the schema
