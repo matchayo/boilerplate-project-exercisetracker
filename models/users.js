@@ -19,5 +19,18 @@ const createUser = (user) => {
     user.save();
 };
 
+// Define methods
+const findUserById = async (id) => {
+  const user = UserModel.findOne({_id: id}).then(foundUser => {
+    console.log("Found: " + foundUser);
+    return foundUser.username;
+  });
+  return user;
+};
+const promise1 = new Promise((resolve, reject) => {
+  resolve('Success!');
+});
+
 exports.User = UserModel;
 exports.createUser = createUser;
+exports.findUserById = findUserById;

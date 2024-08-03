@@ -6,6 +6,7 @@ require('dotenv').config()
 
 const app = express()
 const MONGO_URI = 'mongodb://localhost:27017/ExerciseTracker'
+
 // Connect to Mongoose
 console.log("MONGO_URI: " + MONGO_URI);
 mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -15,10 +16,6 @@ mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
 const ExercisesRoute = require('./routes/exercises');
 const UsersRoute = require('./routes/users');
 const LogsRoute = require('./routes/logs');
-
-const ExerciseSchema = require('./schemas/exercises');
-// const UsersRoute = require('./routes/users');
-// const LogsRoute = require('./routes/logs');
 
 app.use(cors())
 app.use(express.static('public'))

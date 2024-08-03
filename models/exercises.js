@@ -4,14 +4,13 @@ const User = require('./users');
 
 // Defining a schema for a exercise
 const exerciseSchema = new mongoose.Schema({
-    user: {
-      type: mongoose.Schema.Types.ObjectId, 
-      ref: 'User'
+    username: {
+      type: String,
     },
     description: {
       type: String
     },
-    duration: { //in Seconds
+    duration: { //in Minutes
       type: Number
     },
     date: {
@@ -23,12 +22,14 @@ const exerciseSchema = new mongoose.Schema({
 const ExerciseModel = mongoose.model('Exercise', exerciseSchema);
 
 // Define methods
-const createExercise = (exercise, done) => {
+const createExercise = (exercise) => {
     console.log("Saved: " + exercise);
-    exercise.save(function(err, data) {
-        done(null, data);
-    });
+    exercise.save();
 };
+
+const findAllExercise = (exercises) => {
+  ExerciseModel.find();
+}
 
 exports.Exercise = ExerciseModel;
 exports.createExercise = createExercise;
