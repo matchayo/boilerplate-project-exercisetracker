@@ -5,12 +5,13 @@ const User = require('../models/users').User;
 const Exercise = require('../models/exercises').Exercise;
 const createUser = require('../models/users').createUser;
 const findUserById = require('../models/users').findUserById;
+const findAllUsers = require('../models/users').findAllUsers;
 const createExercise = require('../models/exercises').createExercise;
 
-router.post('/', function(req, res) {
-    console.log(req.body);
+router.post('/', async function(req, res) {
     const newUser = new User(req.body);
-    createUser(newUser);
+    await createUser(newUser);
+    res.send(newUser);
 });
 
 router.post('/:_id/exercises', async function(req, res) {
@@ -25,6 +26,12 @@ router.post('/:_id/exercises', async function(req, res) {
         date: req.body.date
     });
     createExercise(newExercise);
+    res.send(newExercise);
+});
+
+router.get('/', async function(req, res) {
+    const users = await findAllUsers();
+    res.send(users);
 });
 
 module.exports = router;

@@ -14,12 +14,11 @@ const userSchema = new mongoose.Schema({
 const UserModel = mongoose.model('User', userSchema);
 
 // Define methods
-const createUser = (user) => {
+const createUser = async (user) => {
     console.log("Saved: " + user);
-    user.save();
+    await user.save();
 };
 
-// Define methods
 const findUserById = async (id) => {
   const user = UserModel.findOne({_id: id}).then(foundUser => {
     console.log("Found: " + foundUser);
@@ -27,10 +26,15 @@ const findUserById = async (id) => {
   });
   return user;
 };
-const promise1 = new Promise((resolve, reject) => {
-  resolve('Success!');
-});
+
+const findAllUsers = async () => {
+  const users = UserModel.find({}).then(foundUsers => {
+    return foundUsers;
+  });
+  return users;
+};
 
 exports.User = UserModel;
 exports.createUser = createUser;
 exports.findUserById = findUserById;
+exports.findAllUsers = findAllUsers;
