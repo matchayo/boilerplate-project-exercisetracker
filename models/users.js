@@ -10,7 +10,8 @@ const userSchema = new Schema({
       unique: true
     },
     count: {
-      type: Number
+      type: Number,
+      default: 0
     },
     log: [{
       type: Schema.Types.ObjectId,
@@ -30,7 +31,7 @@ const createUser = async (user) => {
 const findUserById = async (id) => {
   const user = UserModel.findOne({_id: id}).then(foundUser => {
     console.log("Found: " + foundUser);
-    return foundUser.username;
+    return foundUser;
   });
   return user;
 };
@@ -42,7 +43,17 @@ const findAllUsers = async () => {
   return users;
 };
 
-exports.User = UserModel;
-exports.createUser = createUser;
-exports.findUserById = findUserById;
-exports.findAllUsers = findAllUsers;
+const addExerciseToUser = async (userId, exerciseId) => {
+  await UserModel.findOne({_id: userId}).then(foundUser => {
+    foundUser.log.push(exerciseId);
+    foundUser.count++;
+    foundUser.save();
+    console.log('Updated: ' + foundUser);
+  });
+}
+
+exports.User              = UserModel;
+exports.createUser        = createUser;
+exports.findUserById      = findUserById;
+exports.findAllUsers      = findAllUsers;
+exports.addExerciseToUser = addExerciseToUser;

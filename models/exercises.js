@@ -34,10 +34,5 @@ const findAllExercise = (exercises) => {
   ExerciseModel.find();
 }
 
-const addExerciseToUser = (userId, exerciseId) => {
-  // Find the user
-  // Update the user's log to add the new exercise Id
-};
-
 exports.Exercise = ExerciseModel;
 exports.createExercise = createExercise;
