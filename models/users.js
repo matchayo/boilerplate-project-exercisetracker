@@ -38,7 +38,15 @@ const findUserById = async (id) => {
 
 const findAllUsers = async () => {
   const users = UserModel.find({}).then(foundUsers => {
-    return foundUsers;
+    var usersList = [];
+    foundUsers.forEach(curr => {
+      let user = {
+        username: curr.username,
+        _id: curr.id
+      }
+      usersList.push(user);
+    });
+    return usersList;
   });
   return users;
 };
