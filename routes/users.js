@@ -24,43 +24,41 @@ router.post('/', async function(req, res) {
 
 /* 
  * PASSED:
- * 1. 
+ * 1. You can POST to /api/users/:_id/exercises with form data description, duration, 
+ *   and optionally date. If no date is supplied, the current date will be used.
  * 
  * TODO:
- * - You can POST to /api/users/:_id/exercises with form data description, duration, 
- *   and optionally date. If no date is supplied, the current date will be used.
  * - The response returned from POST /api/users/:_id/exercises will be the user 
  *   object with the exercise fields added.
- * - 
  */
 router.post('/:_id/exercises', async function(req, res) {
     const foundUser = await findUserById(req.body[':_id']);
 
-    if (foundUser === null) {
-        res.send()
+    if (!foundUser) {
+        res.send('')
+        return
     }
 
     const newExercise = new Exercise({
         user: req.body[':_id'],
         description: req.body.description,
         duration: req.body.duration,
-        date: (new Date(req.body.date)).toDateString()
+        date: new Date(req.body.date)
     });
 
     if (!req.body.date) {
-        var now = new Date();
-        newExercise.date = now.toDateString();
+        newExercise.date = new Date();
     }
 
     createExercise(newExercise.user, newExercise);
     addExerciseToUser(newExercise.user, newExercise._id)
 
     const response = {
-        _id: foundUser._id,
         username: foundUser.username,
         description: newExercise.description,
         duration: newExercise.duration,
-        date: newExercise.date
+        date: newExercise.date.toDateString(),
+        _id: foundUser._id
     }
     res.send(response);
 });
@@ -105,6 +103,15 @@ router.get('/', async function(req, res) {
  *   limit is an integer of how many logs to send back.
  */
 router.get('/:_id/logs', async function(req, res) {
+    const foundUser = await findUserById(req.params._id);
+
+    
+    console.log(foundUser)
+    if (!foundUser) {
+        res.send('')
+        return
+    }
+    res.send(foundUser);
 });
 
 module.exports = router;

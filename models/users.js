@@ -24,11 +24,17 @@ const UserModel = mongoose.model('User', userSchema);
 
 // Define methods
 const createUser = async (user) => {
-    console.log("Saved: " + user);
-    await user.save();
+    // console.log("Saved: " + user);
+    try {
+      await user.save();
+    } catch (error) {
+      console.log(error);
+    }
 };
 
 const findUserById = async (id) => {
+  console.log("id: " + id);
+
   const user = UserModel.findOne({_id: id}).then(foundUser => {
     console.log("Found: " + foundUser);
     return foundUser;
@@ -53,10 +59,12 @@ const findAllUsers = async () => {
 
 const addExerciseToUser = async (userId, exerciseId) => {
   await UserModel.findOne({_id: userId}).then(foundUser => {
-    foundUser.log.push(exerciseId);
-    foundUser.count++;
-    foundUser.save();
-    console.log('Updated: ' + foundUser);
+    if (foundUser) {
+      foundUser.log.push(exerciseId);
+      foundUser.count++;
+      foundUser.save();
+      // console.log('Updated: ' + foundUser);
+    }
   });
 }
 
