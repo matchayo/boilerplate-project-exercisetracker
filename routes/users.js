@@ -100,7 +100,12 @@ router.get('/', async function(req, res) {
  *   limit is an integer of how many logs to send back.
  */
 router.get('/:_id/logs', async function(req, res) {
-    const foundUser = await findUserLogs(req.params._id);
+    var userId = req.params._id;
+    var from = req.query.from? new Date(req.query.from) : null;
+    var to = req.query.to? new Date(req.query.to) : null;
+    var limit = Number(req.query.limit);
+
+    const foundUser = await findUserLogs(userId);
 
     if (!foundUser) {
         res.send('')
@@ -114,13 +119,19 @@ router.get('/:_id/logs', async function(req, res) {
         log: []
     };
 
+    var count = 0;
     foundUser.log.forEach(exercise => {
+        var date = new Date(exercise.date)
+        if ((from !== null && from > date) || (to !== null && to < date)) return;
+        if (!isNaN(limit) && count >= limit) return;
+
         var current = {
             description: exercise.description,
             duration: exercise.duration,
-            date: new Date(exercise.date).toDateString()
+            date: date.toDateString()
         };
         responseUser.log.push(current);
+        count++;
     });
 
     res.send(responseUser);
