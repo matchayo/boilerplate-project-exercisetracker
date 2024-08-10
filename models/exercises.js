@@ -25,9 +25,7 @@ const ExerciseModel = mongoose.model('Exercise', exerciseSchema);
 
 // Define methods
 const createExercise = (userId, exercise) => {
-    console.log("Saved: " + exercise);
     exercise.save();
-    // Add the exercise Id to the User
 };
 
 const findAllExercise = (exercises) => {

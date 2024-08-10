@@ -2,6 +2,8 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+const Exercise = require('./exercises').Exercise;
+
 // Defining a schema for a user
 const userSchema = new Schema({
     username: {
@@ -28,15 +30,12 @@ const createUser = async (user) => {
     try {
       await user.save();
     } catch (error) {
-      console.log(error);
     }
 };
 
 const findUserById = async (id) => {
-  console.log("id: " + id);
 
   const user = UserModel.findOne({_id: id}).then(foundUser => {
-    console.log("Found: " + foundUser);
     return foundUser;
   });
   return user;
@@ -63,13 +62,22 @@ const addExerciseToUser = async (userId, exerciseId) => {
       foundUser.log.push(exerciseId);
       foundUser.count++;
       foundUser.save();
-      // console.log('Updated: ' + foundUser);
     }
   });
 }
+
+const findUserLogs = async (id) => {
+  const user = UserModel.findOne({_id: id})
+    .populate("log")
+    .then(foundUser => {
+    return foundUser;
+  });
+  return user;
+};
 
 exports.User              = UserModel;
 exports.createUser        = createUser;
 exports.findUserById      = findUserById;
 exports.findAllUsers      = findAllUsers;
 exports.addExerciseToUser = addExerciseToUser;
+exports.findUserLogs      = findUserLogs;

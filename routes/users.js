@@ -6,6 +6,7 @@ const createUser        = require('../models/users').createUser;
 const findUserById      = require('../models/users').findUserById;
 const findAllUsers      = require('../models/users').findAllUsers;
 const addExerciseToUser = require('../models/users').addExerciseToUser;
+const findUserLogs      = require('../models/users').findUserLogs;
 
 const Exercise          = require('../models/exercises').Exercise;
 const createExercise    = require('../models/exercises').createExercise;
@@ -26,13 +27,11 @@ router.post('/', async function(req, res) {
  * PASSED:
  * 1. You can POST to /api/users/:_id/exercises with form data description, duration, 
  *   and optionally date. If no date is supplied, the current date will be used.
- * 
- * TODO:
- * - The response returned from POST /api/users/:_id/exercises will be the user 
- *   object with the exercise fields added.
+ * 2. The response returned from POST /api/users/:_id/exercises will be the user 
+ *    object with the exercise fields added.
  */
 router.post('/:_id/exercises', async function(req, res) {
-    const foundUser = await findUserById(req.body[':_id']);
+    const foundUser = await findUserById(req.params._id);
 
     if (!foundUser) {
         res.send('')
@@ -40,7 +39,7 @@ router.post('/:_id/exercises', async function(req, res) {
     }
 
     const newExercise = new Exercise({
-        user: req.body[':_id'],
+        user: req.params._id,
         description: req.body.description,
         duration: req.body.duration,
         date: new Date(req.body.date)
@@ -49,9 +48,8 @@ router.post('/:_id/exercises', async function(req, res) {
     if (!req.body.date) {
         newExercise.date = new Date();
     }
-
     createExercise(newExercise.user, newExercise);
-    addExerciseToUser(newExercise.user, newExercise._id)
+    addExerciseToUser(newExercise.user, newExercise._id);
 
     const response = {
         username: foundUser.username,
@@ -80,14 +78,13 @@ router.get('/', async function(req, res) {
 
 /* 
  * PASSED:
- * 1. 
+ * 1. You can make a GET request to /api/users/:_id/logs to retrieve
+ *    a full exercise log of any user.
+ * 2. A request to a user's log GET /api/users/:_id/logs returns a user 
+ *    object with a count property representing the number of exercises that belong to 
+ *    that user.
  * 
  * TODO:
- * - You can make a GET request to /api/users/:_id/logs to retrieve
- *   a full exercise log of any user.
- * - A request to a user's log GET /api/users/:_id/logs returns a user 
- *   object with a count property representing the number of exercises that belong to 
- *   that user.
  * - A GET request to /api/users/:_id/logs will return the user object with a log array 
  *   of all the exercises added.
  * - Each item in the log array that is returned from GET /api/users/:_id/logs is an 
@@ -103,15 +100,30 @@ router.get('/', async function(req, res) {
  *   limit is an integer of how many logs to send back.
  */
 router.get('/:_id/logs', async function(req, res) {
-    const foundUser = await findUserById(req.params._id);
+    const foundUser = await findUserLogs(req.params._id);
 
-    
-    console.log(foundUser)
     if (!foundUser) {
         res.send('')
         return
     }
-    res.send(foundUser);
+
+    var responseUser = {
+        username: foundUser.username,
+        count: foundUser.count,
+        _id: foundUser._id,
+        log: []
+    };
+
+    foundUser.log.forEach(exercise => {
+        var current = {
+            description: exercise.description,
+            duration: exercise.duration,
+            date: new Date(exercise.date).toDateString()
+        };
+        responseUser.log.push(current);
+    });
+
+    res.send(responseUser);
 });
 
 module.exports = router;
